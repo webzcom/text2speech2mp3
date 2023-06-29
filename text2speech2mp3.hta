@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>CyberAbyss Text Reader v1.0</title>
+ 
+<HTA:APPLICATION
+  APPLICATIONNAME="CyberAbyss Text Reader & MP3 Creator"
+  ID="CyberAbyssTextReader"
+  VERSION="1.0"
+  SCROLL="no"/>
+ 
+<style type="text/css">
+body {
+	background-color: #fdfeff;
+	color: darkblue;
+	font-family: Calibri;
+	font-size: 12pt;
+	margin: 1em 1em;
+}
+textarea {
+        overflow-y: scroll;
+        height: 130%;
+        resize: none; /* Remove this if you want the user to resize the textarea */
+    }
+</style>
+</head>
+ 
+<script language="VBScript">
+'Important note: The Sapi control panel opens here using the .cpl file.
+'Set your system's voice setting here and the you will have to play around with the numbers to find the right voice.
+'C:\Windows\SysWOW64\Speech\SpeechUX\sapi.cpl
+Option Explicit
+
+ON ERROR RESUME NEXT
+Sub TextToSpeechToFile(strText) 
+	Const SAFT48kHz16BitStereo = 39
+	Const SSFMCreateForWrite = 3 ' Creates file even if file exists and so destroys or overwrites the existing file
+
+	Dim oFileStream, oVoice, voice_number, strFileOut
+
+	Set oFileStream = CreateObject("SAPI.SpFileStream")
+		
+	strFileOut = document.getElementById("FileOut").value 
+	if LCase(Right(strFileOut,4)) <> ".wav" then
+		strFileOut = strFileOut & ".wav"
+	end if
+	
+	oFileStream.Format.Type = SAFT48kHz16BitStereo
+	oFileStream.Open strFileOut, SSFMCreateForWrite
+
+	Set oVoice = CreateObject("SAPI.SpVoice")
+	oVoice.Rate = document.getElementById("rate").value 
+	voice_number = document.getElementById("voice_number").value
+	Set oVoice.Voice = oVoice.GetVoices.Item(voice_number)
+	Set oVoice.AudioOutputStream = oFileStream
+	oVoice.Speak strText
+	oFileStream.Close
+	ConvertWav2MP3 strFileOut
+End Sub
+ 
+Sub Window_OnLoad
+	window.resizeTo 1300, 1000
+	'document.title = document.title & ",  Version " & MyFirstHTA.Version
+	ListVoices
+End Sub
+
+Sub TextToSpeech()
+	Dim speachInput, voice_number
+	Dim sapi
+	voice_number = document.getElementById("voice_number").value
+	speachInput = document.getElementById("TextToRead").value
+	
+	Set sapi = createObject("sapi.spvoice")
+	Set sapi.Voice = sapi.GetVoices.Item(voice_number)
+	sapi.Rate = document.getElementById("rate").value 
+	sapi.Volume = 90	
+	
+	If CreateFileOnlyCheck then
+		TextToSpeechToFile speachInput
+	else
+		sapi.Speak speachInput
+		TextToSpeechToFile speachInput		
+	end if
+End Sub
+
+Sub ListVoices()
+	Dim objVoice, strVoice, strVoiceList, voiceIndex
+	Set objVoice  = createObject("sapi.spvoice")	
+	strVoiceList = "Installed voices: "
+	voiceIndex =- 0
+
+	'List installed voices
+	For Each strVoice in objVoice.GetVoices
+		strVoiceList = strVoiceList & " | " & strVoice.GetDescription & " - Index: " & voiceIndex
+		voiceIndex = voiceIndex + 1
+	Next
+	document.getElementById("VoiceList").value = strVoiceList
+End Sub
+
+Function ConvertWav2MP3(strWavFile)
+	'Use ffmpeg.exe to convert the wav file to mp3
+	Dim WshShell
+	Set WshShell = CreateObject("WScript.Shell")
+
+	' Path to the FFmpeg executable
+	Dim ffmpegPath
+	ffmpegPath = "d:\ffmpeg\bin\ffmpeg.exe"
+
+	' Input and output file paths
+	Dim inputFilePath
+	inputFilePath = strWavFile
+
+	Dim outputFilePath
+	outputFilePath = Replace(strWavFile,".wav",".mp3")
+
+	' FFmpeg command to convert .wav to .mp3
+	Dim ffmpegCommand
+	ffmpegCommand = """" & ffmpegPath & """ -i """ & inputFilePath & """ """ & outputFilePath & """"
+
+	' Execute the FFmpeg command
+	WshShell.Run ffmpegCommand, 0, True
+
+	' Cleanup
+	Set WshShell = Nothing
+
+	msgbox("MP3 Conversion complete!")
+End Function
+
+function CreateFileOnlyCheck() 
+    if document.getElementById("createFileOnly").checked then
+		msgbox("Create MP3 file only.")
+		CreateFileOnlyCheck = true
+	end if
+end function	
+
+</script>
+ 
+<body>
+	<h1>CyberAbyss Text Reader & MP3</h1> 
+	<table width="60%">
+		<tr>
+			<td align="left" width="35%">Voice Index </td>
+			<td align="left" width="10%"><input type="text" id="voice_number" value="5" /></td>
+			<td align="left" width="35%">Reading Rate </td>
+			<td align="left" width="10%"><input type="text" id="rate" value="1" /></td>
+		</tr>	
+	</table>
+	<table>
+		<tr>
+			<td>File Name </td>
+			<td><input size="45" type="text" id="FileOut" value="Point Man - Chapter " />.mp3 <input type="checkbox" id="createFileOnly" name="createFileOnly" value="Yes">
+			<label for="createFileOny"> Create MP3 file only</label></td>		
+		</tr>
+	</table>
+	<div style="padding-top: 15px;">	
+		 <input type="button" value="Read text & Create MP3" onclick="TextToSpeech" />	
+	</div> 
+	
+	<textarea id="TextToRead" name="TextToRead" rows="20" cols="90">
+	</textarea> 
+	<textarea id="VoiceList" name="VoiceList" rows="4" cols="80">
+	</textarea>
+
+</body>
+</html>
