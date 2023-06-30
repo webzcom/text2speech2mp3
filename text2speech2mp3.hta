@@ -55,7 +55,10 @@ Sub TextToSpeechToFile(strText)
 	Set oVoice.AudioOutputStream = oFileStream
 	oVoice.Speak strText
 	oFileStream.Close
-	ConvertWav2MP3 strFileOut
+	if CreateFileOnlyCheck then
+		ConvertWav2MP3 strFileOut
+	end if
+	DeleteFile strFileOut
 End Sub
  
 Sub Window_OnLoad
@@ -119,20 +122,35 @@ Function ConvertWav2MP3(strWavFile)
 
 	' Execute the FFmpeg command
 	WshShell.Run ffmpegCommand, 0, True
-
+	
 	' Cleanup
 	Set WshShell = Nothing
+	KillProcess
 
 	msgbox("MP3 Conversion complete!")
 End Function
 
+Sub DeleteFile(strFileName)
+   Dim fso
+   Set fso = CreateObject("Scripting.FileSystemObject")
+   fso.DeleteFile(strFileName)
+End Sub
+
 function CreateFileOnlyCheck() 
     if document.getElementById("createFileOnly").checked then
-		msgbox("Create MP3 file only.")
 		CreateFileOnlyCheck = true
 	end if
 end function	
 
+
+Sub KillProcess()
+Dim objWShell
+Dim TimerID
+Set objWShell = CreateObject("WScript.Shell")
+
+	' Kill ffmpeg '
+	objWShell.Run "taskkill /im ffmpeg.exe", , True
+End Sub
 </script>
  
 <body>
@@ -148,7 +166,7 @@ end function
 	<table>
 		<tr>
 			<td>File Name </td>
-			<td><input size="45" type="text" id="FileOut" value="Point Man - Chapter " />.mp3 <input type="checkbox" id="createFileOnly" name="createFileOnly" value="Yes">
+			<td><input size="45" type="text" id="FileOut" value="Sample " />.mp3 <input type="checkbox" id="createFileOnly" name="createFileOnly" value="Yes">
 			<label for="createFileOny"> Create MP3 file only</label></td>		
 		</tr>
 	</table>
