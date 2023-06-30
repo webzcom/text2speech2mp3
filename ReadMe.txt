@@ -9,4 +9,8 @@ For conversion of the wave file to mp3, you'll need to download the ffmpeg.exe f
 
 Download the ffmpeg-master-latest-win64-gpl.zip file from https://github.com/BtbN/FFmpeg-Builds/releases
 
+Copy the ffmpg.exe file into the text2speech2mp3 root folder.
+
+Configure the variable, ffmpegPath = "ffmpeg.exe"
+
 Just update the text-to-speech script with your ffmpeg installation path and you're good to go!
