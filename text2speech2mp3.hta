@@ -36,12 +36,13 @@ Sub TextToSpeechToFile(strText)
 	Const SAFT48kHz16BitStereo = 39
 	Const SSFMCreateForWrite = 3 ' Creates file even if file exists and so destroys or overwrites the existing file
 
-	Dim oFileStream, oVoice, voice_number, strFileOut
+	Dim oFileStream, oVoice, voice_number, strFileOut, strMP3FileOut
 
 	Set oFileStream = CreateObject("SAPI.SpFileStream")
 		
 	strFileOut = document.getElementById("FileOut").value 
 	if LCase(Right(strFileOut,4)) <> ".wav" then
+		strMP3FileOut = strFileOut & ".mp3"
 		strFileOut = strFileOut & ".wav"
 	end if
 	
@@ -59,6 +60,13 @@ Sub TextToSpeechToFile(strText)
 		ConvertWav2MP3 strFileOut
 	end if
 	DeleteFile strFileOut
+	
+	if document.getElementById("readTextOnly").checked then
+		msgbox("Reading Text Only")
+		DeleteFile strMP3FileOut
+	end if
+	
+	
 End Sub
  
 Sub Window_OnLoad
@@ -107,7 +115,7 @@ Function ConvertWav2MP3(strWavFile)
 
 	' Path to the FFmpeg executable
 	Dim ffmpegPath
-	ffmpegPath = "ffmpeg.exe"
+	ffmpegPath = "d:\ffmpeg\bin\ffmpeg.exe"
 
 	' Input and output file paths
 	Dim inputFilePath
@@ -122,35 +130,36 @@ Function ConvertWav2MP3(strWavFile)
 
 	' Execute the FFmpeg command
 	WshShell.Run ffmpegCommand, 0, True
-	
+
 	' Cleanup
 	Set WshShell = Nothing
-	KillProcess
 
 	msgbox("MP3 Conversion complete!")
 End Function
 
+
 Sub DeleteFile(strFileName)
    Dim fso
    Set fso = CreateObject("Scripting.FileSystemObject")
-   fso.DeleteFile(strFileName)
+   if fso.FileExists(strFileName) then
+	fso.DeleteFile strFileName
+   end if   
 End Sub
 
 function CreateFileOnlyCheck() 
     if document.getElementById("createFileOnly").checked then
+		msgbox("Create MP3 file only.")
+		CreateFileOnlyCheck = true
+	end if
+end function
+
+function ReadTextOnlyCheck() 
+    if document.getElementById("readTextOnly").checked then
+		msgbox("Reading Text Only")
 		CreateFileOnlyCheck = true
 	end if
 end function	
 
-
-Sub KillProcess()
-Dim objWShell
-Dim TimerID
-Set objWShell = CreateObject("WScript.Shell")
-
-	' Kill ffmpeg '
-	objWShell.Run "taskkill /im ffmpeg.exe", , True
-End Sub
 </script>
  
 <body>
@@ -160,24 +169,26 @@ End Sub
 			<td align="left" width="35%">Voice Index </td>
 			<td align="left" width="10%"><input type="text" id="voice_number" value="0" /></td>
 			<td align="left" width="35%">Reading Rate </td>
-			<td align="left" width="10%"><input type="text" id="rate" value="1" /></td>
+			<td align="left" width="10%"><input type="text" id="rate" value="1.5" /></td>
 		</tr>	
 	</table>
 	<table>
 		<tr>
 			<td>File Name </td>
-			<td><input size="45" type="text" id="FileOut" value="Sample " />.mp3 <input type="checkbox" id="createFileOnly" name="createFileOnly" value="Yes">
-			<label for="createFileOny"> Create MP3 file only</label></td>		
+			<td><input size="45" type="text" id="FileOut" value="Cyber " />.mp3 <input type="checkbox" id="createFileOnly" name="createFileOnly" value="Yes"> 
+			<label for="createFileOny"> Create MP3 file only</label> 
+			/ 
+			/ <input type="checkbox" id="readTextOnly" name="readTextOnly" checked value="Yes"> Read Text Only 
+			</td>		
 		</tr>
 	</table>
 	<div style="padding-top: 15px;">	
 		 <input type="button" value="Read text & Create MP3" onclick="TextToSpeech" />	
 	</div> 
 	
-	<textarea id="TextToRead" name="TextToRead" rows="20" cols="90">
-	</textarea> 
-	<textarea id="VoiceList" name="VoiceList" rows="4" cols="80">
-	</textarea>
+	<textarea id="TextToRead" name="TextToRead" rows="20" cols="90"></textarea>
+	<hr>	
+	<textarea id="VoiceList" name="VoiceList" rows="10" cols="80"></textarea>
 
 </body>
 </html>
