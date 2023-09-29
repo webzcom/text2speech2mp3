@@ -10,18 +10,30 @@
   SCROLL="no"/>
  
 <style type="text/css">
+
 body {
 	background-color: #fdfeff;
 	color: darkblue;
 	font-family: Calibri;
 	font-size: 12pt;
 	margin: 1em 1em;
+	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1,StartColorStr='#12b6cc', endColorStr='#cc7212');
 }
+table {
+	padding: 5px;
+}
+td {
+	padding: 2%;
+}
+
 textarea {
         overflow-y: scroll;
         height: 130%;
         resize: none; /* Remove this if you want the user to resize the textarea */
     }
+#wrapper {
+	padding-left: 20px;
+}
 </style>
 </head>
  
@@ -155,7 +167,7 @@ end function
 
 function ReadTextOnlyCheck() 
     if document.getElementById("readTextOnly").checked then
-		'msgbox("Reading Text Only")
+		msgbox("Reading Text Only")
 		CreateFileOnlyCheck = true
 	end if
 end function	
@@ -163,32 +175,44 @@ end function
 </script>
  
 <body>
-	<h1>CyberAbyss Text Reader & Text to MP3</h1> 
-	<table width="60%">
-		<tr>
-			<td align="left" width="35%">Voice Index </td>
-			<td align="left" width="10%"><input type="text" id="voice_number" value="0" /></td>
-			<td align="left" width="35%">Reading Rate </td>
-			<td align="left" width="10%"><input type="text" id="rate" value="1.5" /></td>
-		</tr>	
-	</table>
-	<table>
-		<tr>
-			<td>File Name </td>
-			<td><input size="45" type="text" id="FileOut" value="Cyber " />.mp3 <input type="checkbox" id="createFileOnly" name="createFileOnly" value="Yes"> 
-			<label for="createFileOny"> Create MP3 file only</label> 
-			/ 
-			/ <input type="checkbox" id="readTextOnly" name="readTextOnly" checked value="Yes"> Read Text Only 
-			</td>		
-		</tr>
-	</table>
-	<div style="padding-top: 15px;">	
-		 <input type="button" value="Read text & Create MP3" onclick="TextToSpeech" />	
-	</div> 
-	
-	<textarea id="TextToRead" name="TextToRead" rows="20" cols="90"></textarea>
-	<hr>	
-	<textarea id="VoiceList" name="VoiceList" rows="10" cols="80"></textarea>
+	<div id="wrapper">
+		<h1>Text Reader & Text to MP3 Audio File</h1>
+		<h3 style="position: absolute; top: 10%; left: 75%;">By Cyber Abyss</h3>	
+		<table>
+					<tr>
+				<td>
+				<input type="checkbox" id="createFileOnly" name="createFileOnly" value="Yes"> 
+				<label for="createFileOny"> Create MP3 file only</label>
+				</td>
+				<td>
+				<input type="checkbox" id="readTextOnly" name="readTextOnly" checked value="Yes"> Read Text Only
+				</td>	 
+			</tr>
+		</table>
+		<table width="60%">
 
+			<tr>
+				<td align="left" width="35%">Voice Index </td>
+				<td align="left" width="10%"><input type="text" id="voice_number" value="0" /></td>
+				<td align="left" width="35%">Reading Rate </td>
+				<td align="left" width="10%"><input type="text" id="rate" value="1.5" /></td>
+			</tr>	
+		</table>
+		<table>
+
+			<tr>
+				<td>File Name </td>
+				<td><input size="45" type="text" id="FileOut" value="Cyber " />.mp3 
+				</td>		
+			</tr>
+		</table>
+		<div style="padding-top: 15px;">	
+			 <input type="button" value="Read text & Create MP3" onclick="TextToSpeech" />	
+		</div> 
+		
+		<textarea id="TextToRead" name="TextToRead" rows="20" cols="90"></textarea>
+		<hr>	
+		<textarea id="VoiceList" name="VoiceList" rows="10" cols="80"></textarea>
+	</div>
 </body>
 </html>
