@@ -20,7 +20,7 @@ body {
 	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=1,StartColorStr='#12b6cc', endColorStr='#cc7212');
 }
 table {
-	padding: 5px;
+	padding: 0px;
 }
 td {
 	padding: 2%;
@@ -82,7 +82,7 @@ Sub TextToSpeechToFile(strText)
 End Sub
  
 Sub Window_OnLoad
-	window.resizeTo 1300, 1000
+	window.resizeTo 1300, 1100
 	'document.title = document.title & ",  Version " & MyFirstHTA.Version
 	ListVoices
 End Sub
@@ -176,9 +176,9 @@ end function
  
 <body>
 	<div id="wrapper">
-		<h1>Text Reader & Text to MP3 Audio File</h1>
+		<h1 style="margin-bottom:-10px;">Text Reader & Text to MP3 Audio File</h1>
 		<h3 style="position: absolute; top: 10%; left: 75%;">by Cyber Abyss ]:-></h3>	
-		<table>
+		<table style="margin-top:-10px;">
 			<tr>
 				<td>
 					<input type="checkbox" id="createFileOnly" name="createFileOnly" value="Yes"> 
@@ -212,7 +212,7 @@ end function
 		
 		<textarea id="TextToRead" name="TextToRead" rows="20" cols="90"></textarea>
 		<hr>	
-		<textarea id="VoiceList" name="VoiceList" rows="10" cols="80"></textarea>
+		<textarea id="VoiceList" name="VoiceList" rows="10" cols="90"></textarea>
 	</div>
 </body>
 </html>
