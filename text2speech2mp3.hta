@@ -73,12 +73,10 @@ Sub TextToSpeechToFile(strText)
 	end if
 	DeleteFile strFileOut
 	
-	if document.getElementById("readTextOnly").checked then
-		msgbox("Reading Text Only")
+	if NOT document.getElementById("createFileOnly").checked then
+		'msgbox("Reading Text Only")
 		DeleteFile strMP3FileOut
-	end if
-	
-	
+	end if	
 End Sub
  
 Sub Window_OnLoad
@@ -166,8 +164,8 @@ function CreateFileOnlyCheck()
 end function
 
 function ReadTextOnlyCheck() 
-    if document.getElementById("readTextOnly").checked then
-		msgbox("Reading Text Only")
+    if NOT document.getElementById("createFileOnly").checked then
+		'msgbox("Reading Text Only")
 		CreateFileOnlyCheck = true
 	end if
 end function	
@@ -184,9 +182,7 @@ end function
 					<input type="checkbox" id="createFileOnly" name="createFileOnly" value="Yes"> 
 					<label for="createFileOny"> Create MP3 file only</label>
 				</td>
-				<td>
-					<input type="checkbox" id="readTextOnly" name="readTextOnly" checked value="Yes"> Read Text Only
-				</td>	 
+	 
 			</tr>
 		</table>
 		<table width="60%">
